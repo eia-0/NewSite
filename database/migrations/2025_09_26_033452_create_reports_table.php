@@ -27,6 +27,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->nullOnDelete();
+            $table->softDeletes();
         });
     }
 
