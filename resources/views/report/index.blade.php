@@ -11,19 +11,19 @@
         <div class="card">
             <div class="number-car">
                 Номер автомобиля: {{$report->number}}
-                
             </div>
             <div class="inform">
                 Описание нарушения: {{$report->description}}
-                
             </div>
             <div class="time">
                 Время:
             </div>
-            <form method="POST" action="{{route('reports.dectroy', $report->id)}}">
+            <a href="{{ route('reports.edit', $report->id) }}">Редактировать</a>
+            
+            <form method="POST" action="{{ route('reports.destroy', $report->id) }}">
                 @method('delete')
                 @csrf
-                <input type="sumbit" value="Удалить">
+                <input type="submit" value="Удалить">
             </form>
         </div>
     @endforeach
