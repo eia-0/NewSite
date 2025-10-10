@@ -6,6 +6,7 @@
     <title>Document</title>
 </head>
 <body>
+    <a href="{{ route('reports.create') }}">Создать заявление</a>
     @foreach ($reports as $report)
         <div class="card">
             <div class="number-car">
@@ -25,7 +26,6 @@
                 <input type="sumbit" value="Удалить">
             </form>
         </div>
-        
     @endforeach
 </body>
 </html>
