@@ -15,6 +15,9 @@
             <div class="inform">
                 Описание нарушения: {{$report->description}}
             </div>
+            <div>
+                Описание нарушения: {{$report->status->name}}
+            </div>
             <div class="time">
                 Время:
             </div>
@@ -27,5 +30,27 @@
             </form>
         </div>
     @endforeach
+    {{ $reports->links() }}
+    <div>
+        <span>Сортировка по дате создания: </span>
+        <a href="{{ route('reports.index', ['sort' => 'desc']) }}">
+            сначала новые
+        </a>
+        <a href="{{ route('reports.index', ['sort' => 'asc']) }}">
+            сначала старые
+        </a>
+    </div>
+    <div>
+        <p>Фильтрация по статусу заявки</p>
+        <ul>
+            @foreach ($statuses as $status)
+                <li>
+                    <a href="{{ route('reports.index', ['status' => $status->id]) }}">
+                        {{ $status->name }}
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </div>
 </body>
 </html>
