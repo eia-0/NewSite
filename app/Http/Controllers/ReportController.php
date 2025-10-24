@@ -17,21 +17,21 @@ public function index(Request $request)
 
     $status = $request->input('status');
     $validate = $request->validate([
-        'status' => 'nullable|exists:statuses,id'
+        'status' => "exists:statuses,id"
     ]);
 
-    if($status){
+    if($validate){
         $reports = Report::where('status_id', $status)
             ->orderBy('created_at', $sort)
-            ->paginate(8);
+            ->paginate(2);
     } else {
         $reports = Report::orderBy('created_at', $sort)
-            ->paginate(8);
+            ->paginate(2);
     }
 
     $statuses = Status::all();
 
-    return view('reports.index', compact('reports','statuses','sort','status'));
+    return view('report.index', compact('reports','statuses','sort','status'));
 }
 
     public function destroy(Report $report){

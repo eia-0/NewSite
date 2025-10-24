@@ -6,6 +6,28 @@
     <title>Document</title>
 </head>
 <body>
+    <div>
+        <span>Сортировка по дате создания: </span>
+        <a href="{{ route('reports.index', ['sort' => 'desc', 'status' => request('status')]) }}">
+            сначала новые
+        </a>
+        <a href="{{ route('reports.index', ['sort' => 'asc', 'status' => request('status')]) }}">
+            сначала старые
+        </a>
+    </div>
+    <div>
+        <p>Фильтрация по статусу заявки</p>
+        <ul>
+            @foreach ($statuses as $status)
+                <li>
+                    <a href="{{ route('reports.index', ['status' => $status->id, 'sort' => request('sort', 'desc')]) }}">
+                        {{ $status->name }}
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+
     <a href="{{ route('reports.create') }}">Создать заявление</a>
     @foreach ($reports as $report)
         <div class="card">
@@ -16,10 +38,10 @@
                 Описание нарушения: {{$report->description}}
             </div>
             <div>
-                Описание нарушения: {{$report->status->name}}
+                Статус: {{$report->status->name}} {{-- исправлено дублирование --}}
             </div>
             <div class="time">
-                Время:
+                Время: {{ $report->created_at->format('d.m.Y H:i') }} {{-- форматирование даты --}}
             </div>
             <a href="{{ route('reports.edit', $report->id) }}">Редактировать</a>
             
@@ -30,27 +52,6 @@
             </form>
         </div>
     @endforeach
-    {{ $reports->links() }}
-    <div>
-        <span>Сортировка по дате создания: </span>
-        <a href="{{ route('reports.index', ['sort' => 'desc']) }}">
-            сначала новые
-        </a>
-        <a href="{{ route('reports.index', ['sort' => 'asc']) }}">
-            сначала старые
-        </a>
-    </div>
-    <div>
-        <p>Фильтрация по статусу заявки</p>
-        <ul>
-            @foreach ($statuses as $status)
-                <li>
-                    <a href="{{ route('reports.index', ['status' => $status->id]) }}">
-                        {{ $status->name }}
-                    </a>
-                </li>
-            @endforeach
-        </ul>
-    </div>
+    {{ $reports->appends(request()->query())->links() }}
 </body>
 </html>
