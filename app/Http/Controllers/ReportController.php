@@ -45,6 +45,10 @@ public function index(Request $request)
             'description' => 'string',
         ]);
 
+        //Добавляю
+        $data['user_id'] = Auth::user()->id;
+        $data['status_id'] = 1;
+
         $report -> create($data);
         return redirect()->back();
     }
