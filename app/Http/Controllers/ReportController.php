@@ -5,42 +5,62 @@ namespace App\Http\Controllers;
 use App\Models\Report;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
-public function index(Request $request)
-{
-    $sort = $request->input('sort');
-    if($sort != 'asc' && $sort != 'desc'){
-        $sort = 'desc';
+    public function index(Request $request)
+    {
+        $sort = $request->input('sort');
+        if($sort != 'asc' && $sort != 'desc'){
+            $sort = 'desc';
+        }
+
+        $status = $request->input('status');
+        $validate = $request->validate([
+            'status' => "exists:statuses,id"
+        ]);
+
+        if($validate){
+            $reports = Report::where('status_id', $status)
+                ->where('user_id', Auth::user()->id)
+                ->orderBy('created_at', $sort)
+                ->paginate(2);
+        } else {
+            $reports = Report::where('user_id', Auth::user()->id)
+                ->orderBy('created_at', $sort)
+                ->paginate(2);
+        }
+
+        $statuses = Status::all();
+
+        return view('report.index', compact('reports','statuses','sort','status'));
     }
 
-    $status = $request->input('status');
-    $validate = $request->validate([
-        'status' => "exists:statuses,id"
-    ]);
-
-    if($validate){
-        $reports = Report::where('status_id', $status)
-            ->orderBy('created_at', $sort)
-            ->paginate(2);
-    } else {
-        $reports = Report::orderBy('created_at', $sort)
-            ->paginate(2);
+    // ДОБАВИТЬ ЭТОТ МЕТОД ЕСЛИ ЕГО НЕТ
+    public function show(Report $report)
+    {
+        if (Auth::user()->id != $report->user_id) {
+            abort(403, 'У вас нет прав на просмотр этой записи.');
+        }
+        
+        return view('reports.show', compact('report'));
     }
 
-    $statuses = Status::all();
-
-    return view('report.index', compact('reports','statuses','sort','status'));
-}
-
-    public function destroy(Report $report){
-        $report -> delete();
+    public function destroy(Report $report)
+    {
+        // ДОБАВИТЬ ПРОВЕРКУ
+        if (Auth::user()->id != $report->user_id) {
+            abort(403, 'У вас нет прав на удаление этой записи.');
+        }
+        
+        $report->delete();
         return redirect()->back();
     }
 
-    public function store(Request $request, Report $report){
-        $data = $request -> validate([
+    public function store(Request $request, Report $report)
+    {
+        $data = $request->validate([
             'number' => 'string',
             'description' => 'string',
         ]);
@@ -49,15 +69,27 @@ public function index(Request $request)
         $data['user_id'] = Auth::user()->id;
         $data['status_id'] = 1;
 
-        $report -> create($data);
+        $report->create($data);
         return redirect()->back();
     }
 
-    public function edit(Report $report){
-        return view('report.edit', compact('report'));
+    public function edit(Report $report)
+    {
+        if (Auth::user()->id === $report->user_id){
+            return view('reports.edit', compact('report'));
+        }
+        else{
+            abort(403, 'У вас нет прав на редактирование этой записи.');
+        }
     }
     
-    public function update(Request $request, Report $report){
+    public function update(Request $request, Report $report)
+    {
+        // ДОБАВИТЬ ПРОВЕРКУ
+        if (Auth::user()->id != $report->user_id) {
+            abort(403, 'У вас нет прав на обновление этой записи.');
+        }
+        
         $data = $request->validate([
             'number' => 'string',
             'description' => 'string',
