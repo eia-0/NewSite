@@ -76,7 +76,7 @@ class ReportController extends Controller
     public function edit(Report $report)
     {
         if (Auth::user()->id === $report->user_id){
-            return view('reports.edit', compact('report'));
+            return view('report.edit', compact('report'));
         }
         else{
             abort(403, 'У вас нет прав на редактирование этой записи.');
@@ -102,7 +102,7 @@ class ReportController extends Controller
     public function statusUpdate(Request $request, Report $report)
     {
         $request -> validate([
-            'status_id' => 'required| exists:statuses_id',
+            'status_id' => 'required| exists:statuses,id',
         ]);
         $report->update($request->only(['status_id']));
         return redirect() -> back();
