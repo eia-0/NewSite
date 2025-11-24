@@ -1,77 +1,79 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Административная панель</title>
-</head>
-<body>
-    <x-app-layout>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
-                        <h1 class="text-2xl font-bold mb-6">Административная панель</h1>
-                        
-                        @foreach($reports as $report)
-                            <div class="mb-8 p-4 border border-gray-200 rounded-lg">
-                                <!-- ФИО -->
-                                <div class="mb-4">
-                                    <h2 class="text-lg font-semibold">ФИО</h2>
-                                    <p class="text-gray-700">{{ $report->user->lastname ?? '' }} {{ $report->user->name ?? '' }} {{ $report->user->middlename ?? '' }}</p>
-                                </div>
-
-                                <!-- Текст заявления -->
-                                <div class="mb-4">
-                                    <h2 class="text-lg font-semibold">Текст заявления</h2>
-                                    <p class="text-gray-700 whitespace-pre-line">{{ $report->description ?? 'Текст отсутствует' }}</p>
-                                </div>
-
-                                <!-- Номер автомобиля -->
-                                <div class="mb-4">
-                                    <h2 class="text-lg font-semibold">Номер автомобиля</h2>
-                                    <p class="text-gray-700">{{ $report->license_plate ?? 'Не указан' }}</p>
-                                </div>
-
-                                <!-- Статус с формой -->
-                                <div class="mb-4">
-                                    <h2 class="text-lg font-semibold">Статус</h2>
-                                    <form class="status-form" action="{{ route('reports.status.update', $report->id) }}" method="POST">
-                                        @method('PATCH')
-                                        @csrf
-                                        <select name="status_id" id="status_id_{{ $report->id }}" class="border border-gray-300 rounded px-3 py-2">
-                                            @foreach($statuses as $status)
-                                                <option value="{{ $status->id }}" {{ $status->id === $report->status_id ? 'selected' : '' }}>
-                                                    {{ $status->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </form>
-                                </div>
-                            </div>
-                            <hr class="my-6">
-                        @endforeach
-
-                        @if($reports->count() === 0)
-                            <p class="text-gray-500">Заявки отсутствуют</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
+<x-app-layout class="bg-[#DDE8FF] min-h-screen">
+    <div class="max-w-7xl mx-auto p-6">
+        <!-- Заголовок -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">НАРУШЕНИЙ.НЕТ</h1>
+            <h2 class="text-xl text-gray-700">Панель администратора</h2>
         </div>
-    </x-app-layout>
 
-    <!-- Добавьте JS для автоматической отправки формы при изменении статуса -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const selectElements = document.querySelectorAll('.status-form select');
-            
-            selectElements.forEach(function(select) {
-                select.addEventListener('change', function() {
-                    this.form.submit(); // Отправляет форму при изменении select
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+        <!-- Таблица заявлений -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-100 border-b">
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Дата</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">ФИО подавшего</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Номер автомобиля</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Описание заявления</th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                
+                    @foreach($reports as $report)
+                        <tr class="border-b hover:bg-gray-50">
+                            <!-- Дата -->
+                            <td class="px-6 py-4 text-sm text-gray-900">
+                                {{ $report->created_at->format('d.m.Y') }}
+                            </td>
+                            
+                            <!-- ФИО -->
+                            <td class="px-6 py-4 text-sm text-gray-900">
+                                {{ $report->user->lastname ?? '' }} {{ $report->user->name ?? '' }} {{ $report->user->middlename ?? '' }}
+                            </td>
+                            
+                            <!-- Номер автомобиля -->
+                            <td class="px-6 py-4 text-sm text-gray-900 font-mono">
+                                {{ $report->license_plate ?? $report->number ?? 'Не указан' }}
+                            </td>
+                            
+                            <!-- Описание заявления -->
+                            <td class="px-6 py-4 text-sm text-gray-700">
+                                {{ $report->description ?? 'Текст отсутствует' }}
+                            </td>
+                            
+                            <!-- Статус -->
+                            <td class="px-6 py-4">
+                                <div class="flex flex-wrap gap-1">
+                                    @foreach($statuses as $status)
+                                        <form action="{{ route('reports.status.update', $report->id) }}" method="POST" class="status-form">
+                                            @method('PATCH')
+                                            @csrf
+                                            <input type="hidden" name="status_id" value="{{ $status->id }}">
+                                            <button type="submit" 
+                                                    class="px-3 py-1 text-xs rounded border transition duration-200 
+                                                           {{ $status->id === $report->status_id 
+                                                              ? 'bg-blue-500 text-white border-blue-500' 
+                                                              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100' }}">
+                                                {{ $status->name }}
+                                            </button>
+                                        </form>
+                                    @endforeach
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+
+                    @if($reports->count() === 0)
+                        <tr>
+                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                Заявки отсутствуют
+                            </td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
+</x-app-layout>
