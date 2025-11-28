@@ -7,13 +7,15 @@ use App\Http\Middleware\Admin;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        return redirect()->route('reports.index');
+    }
+    return redirect()->route('register');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('reports.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
 
 Route::middleware((Admin::class))->group(function(){  
     Route::get('/admin', [AdminController::class,'index'])->name('admin.index');
@@ -26,18 +28,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-
     Route::get('/reports/create', function () {
-    return view('report.create');
+        return view('report.create');
     })->name('reports.create');
-
     Route::delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
-
     Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
-
     Route::get('/reports/{report}/edit', [ReportController::class, 'edit'])->name('reports.edit');
     Route::put('/reports/{report}', [ReportController::class, 'update'])->name('reports.update');
-
 });
 
 require __DIR__.'/auth.php';

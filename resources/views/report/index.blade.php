@@ -50,7 +50,7 @@
                     <!-- Заголовок карточки -->
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800">{{ $report->created_at->format('d.m.Y H:i') }}</h3>
+                            <h3 class="text-lg font-semibold text-gray-800">{{\Carbon\Carbon::parse($report->created_at)->translatedFormat('j F Y h:i');}}</h3>
                             <div class="number-car mt-1">
                                 <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                                     {{$report->number}}

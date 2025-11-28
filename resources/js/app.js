@@ -1,6 +1,8 @@
 import './bootstrap';
 import 'flowbite';
 import Alpine from 'alpinejs';
+import { mask } from '@alpinejs/mask';
+Alpine.plugin(mask)
 
 window.Alpine = Alpine;
 
@@ -13,3 +15,7 @@ for (let elem of selectElements) {
         this.form.sumbit();
     });
 }
+
+import.meta.glob([
+    '../images/pol.png',
+ ]);
