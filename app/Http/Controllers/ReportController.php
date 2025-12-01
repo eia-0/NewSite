@@ -17,59 +17,37 @@ class ReportController extends Controller
         }
 
         $status = $request->input('status');
-        $validate = $request->validate([
-            'status' => "exists:statuses,id"
-        ]);
+        $reportsQuery = Report::where('user_id', Auth::user()->id);
 
-        if($validate){
-            $reports = Report::where('status_id', $status)
-                ->where('user_id', Auth::user()->id)
-                ->orderBy('created_at', $sort)
-                ->paginate(2);
-        } else {
-            $reports = Report::where('user_id', Auth::user()->id)
-                ->orderBy('created_at', $sort)
-                ->paginate(2);
+        // Проверяем наличие статуса и что он существует в базе
+        if($status && Status::where('id', $status)->exists()) {
+            $reportsQuery->where('status_id', $status);
         }
+
+        $reports = $reportsQuery->orderBy('created_at', $sort)
+                               ->paginate(2);
 
         $statuses = Status::all();
 
         return view('report.index', compact('reports','statuses','sort','status'));
     }
 
-    // ДОБАВИТЬ ЭТОТ МЕТОД ЕСЛИ ЕГО НЕТ
     public function show(Report $report)
     {
         if (Auth::user()->id != $report->user_id) {
             abort(403, 'У вас нет прав на просмотр этой записи.');
         }
         
-        return view('reports.show', compact('report'));
+        return view('report.show', compact('report')); // Исправлено reports.show на report.show
     }
 
     public function destroy(Report $report)
     {
-        // ДОБАВИТЬ ПРОВЕРКУ
         if (Auth::user()->id != $report->user_id) {
             abort(403, 'У вас нет прав на удаление этой записи.');
         }
         
         $report->delete();
-        return redirect()->back();
-    }
-
-    public function store(Request $request, Report $report)
-    {
-        $data = $request->validate([
-            'number' => 'string',
-            'description' => 'string',
-        ]);
-
-        //Добавляю
-        $data['user_id'] = Auth::user()->id;
-        $data['status_id'] = 1;
-
-        $report->create($data);
         return redirect()->back();
     }
 
@@ -85,7 +63,6 @@ class ReportController extends Controller
     
     public function update(Request $request, Report $report)
     {
-        // ДОБАВИТЬ ПРОВЕРКУ
         if (Auth::user()->id != $report->user_id) {
             abort(403, 'У вас нет прав на обновление этой записи.');
         }
@@ -101,10 +78,28 @@ class ReportController extends Controller
 
     public function statusUpdate(Request $request, Report $report)
     {
-        $request -> validate([
-            'status_id' => 'required| exists:statuses,id',
+        $request->validate([
+            'status_id' => 'required|exists:statuses,id',
         ]);
+        
         $report->update($request->only(['status_id']));
-        return redirect() -> back();
+        return redirect()->back();
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'number' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+        ]);
+
+        Report::create([
+            'number' => $request->number,
+            'description' => $request->description,
+            'status_id' => 1,
+            'user_id' => Auth::user()->id,
+        ]);
+        
+        return redirect()->route('dashboard')->with('info', 'Заявление отправлено');
     }
 }

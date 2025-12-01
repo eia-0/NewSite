@@ -19,6 +19,7 @@ class Admin
             if (Auth::user()->isAdmin()) {
                 return $next($request);
             }
+            return redirect('login')->with('error','Авторизуйтесь под администратором');
         }
         
         return redirect('login')->with('error', 'Авторизуйтесь под администратором');
