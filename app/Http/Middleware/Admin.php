@@ -15,13 +15,9 @@ class Admin
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */    public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check()) {
-            if (Auth::user()->isAdmin()) {
-                return $next($request);
-            }
-            return redirect('login')->with('error','Авторизуйтесь под администратором');
+        if (Auth::check() && Auth::user()->isAdmin()){
+            return $next($request);
         }
-        
         return redirect('login')->with('error', 'Авторизуйтесь под администратором');
     }
 }

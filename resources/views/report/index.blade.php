@@ -1,5 +1,12 @@
 <x-app-layout class="bg-[#DDE8FF] min-h-screen">
     <div class="max-w-6xl mx-auto p-6">
+
+        <!-- Уведомление -->
+        @if(session('info'))
+            <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+                {{ session('info') }}
+            </div>
+        @endif
         <!-- Заголовок -->
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-gray-900 mb-2">НАРУШЕНИЙ.НЕТ</h1>

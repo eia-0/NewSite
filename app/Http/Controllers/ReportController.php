@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Report;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
@@ -19,7 +20,6 @@ class ReportController extends Controller
         $status = $request->input('status');
         $reportsQuery = Report::where('user_id', Auth::user()->id);
 
-        // Проверяем наличие статуса и что он существует в базе
         if($status && Status::where('id', $status)->exists()) {
             $reportsQuery->where('status_id', $status);
         }
@@ -38,7 +38,7 @@ class ReportController extends Controller
             abort(403, 'У вас нет прав на просмотр этой записи.');
         }
         
-        return view('report.show', compact('report')); // Исправлено reports.show на report.show
+        return view('report.show', compact('report')); //reports.show на report.show
     }
 
     public function destroy(Report $report)
@@ -100,6 +100,6 @@ class ReportController extends Controller
             'user_id' => Auth::user()->id,
         ]);
         
-        return redirect()->route('dashboard')->with('info', 'Заявление отправлено');
+        return redirect()->route('reports.index')->with('info', 'Заявление отправлено');
     }
 }

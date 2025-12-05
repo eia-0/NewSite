@@ -392,7 +392,7 @@
     "Log out": "Выйти",
     "Log Out Other Browser Sessions": "Завершить другие сессии",
     "Log Viewer": "Просмотр логов",
-    "Login": "Войти",
+    "Login": "Логин",
     "Logout": "Выйти",
     "Logs": "Логи",
     "Luxembourg": "Люксембург",
@@ -439,6 +439,11 @@
     "Myanmar": "Мьянма",
     "Name": "Имя",
     "name": "имя",
+
+    "Middlename": "Фамилия",
+    "Lastname": "Отчество",
+    "Tel": "Телефон",
+
     "Namibia": "Намибия",
     "Nauru": "Науру",
     "Nepal": "Непал",
