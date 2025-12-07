@@ -18,6 +18,59 @@
         <div class="min-h-screen bg-gray-100">
             @include('layouts.navigation')
 
+                        <!-- Уведомление -->
+            @if(session('warning'))
+                <div id="alert-warning" class="mb-6 bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-lg relative">
+                    {{ session('warning') }}
+                    <button type="button" class="absolute top-3 right-3 text-yellow-700 hover:text-yellow-900" 
+                            onclick="this.parentElement.style.display='none'">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                        </svg>
+                        <span class="sr-only">Close</span>
+                    </button>
+                </div>
+            @endif
+
+            @if(session('info'))
+                <div id="alert-info" class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative">
+                    {{ session('info') }}
+                    <button type="button" class="absolute top-3 right-3 text-green-700 hover:text-green-900" 
+                            onclick="this.parentElement.style.display='none'">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                        </svg>
+                        <span class="sr-only">Close</span>
+                    </button>
+                </div>
+            @endif
+
+            @if(session('success'))
+                <div id="alert-success" class="mb-6 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg relative">
+                    {{ session('success') }}
+                    <button type="button" class="absolute top-3 right-3 text-blue-700 hover:text-blue-900" 
+                            onclick="this.parentElement.style.display='none'">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                        </svg>
+                        <span class="sr-only">Close</span>
+                    </button>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div id="alert-error" class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative">
+                    {{ session('error') }}
+                    <button type="button" class="absolute top-3 right-3 text-red-700 hover:text-red-900" 
+                            onclick="this.parentElement.style.display='none'">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                        </svg>
+                        <span class="sr-only">Close</span>
+                    </button>
+                </div>
+            @endif
+
             <!-- Page Heading -->
             @isset($header)
                 <header class="bg-white shadow">
